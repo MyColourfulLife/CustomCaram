@@ -196,9 +196,18 @@ class CustomCaramViewController: UIViewController, UIImagePickerControllerDelega
                 self.captureDevice!.flashMode = .auto
             }
             
-            if self.captureDevice!.isFocusModeSupported(.autoFocus) {
-                self.captureDevice!.focusMode = .autoFocus
+            if self.captureDevice!.isFocusModeSupported(.continuousAutoFocus) {
+                self.captureDevice!.focusMode = .continuousAutoFocus
             }
+            
+            if self.captureDevice!.isSmoothAutoFocusSupported {
+                self.captureDevice!.isSmoothAutoFocusEnabled = true
+            }
+            
+            if self.captureDevice!.isExposureModeSupported(.continuousAutoExposure) {
+                self.captureDevice!.exposureMode = .continuousAutoExposure
+            }
+            
             
             if self.captureDevice!.isWhiteBalanceModeSupported(.autoWhiteBalance) {
                 self.captureDevice!.whiteBalanceMode = .autoWhiteBalance
