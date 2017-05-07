@@ -48,7 +48,7 @@ class CustomCaramViewController: UIViewController, UIImagePickerControllerDelega
     ///输出
     var imageOutPut:       AVCaptureStillImageOutput?
     
-    
+    var showImage:         UIImageView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -226,8 +226,8 @@ class CustomCaramViewController: UIViewController, UIImagePickerControllerDelega
         
         //设置session
         self.captureSession = AVCaptureSession()
-        if self.captureSession!.canSetSessionPreset(AVCaptureSessionPresetPhoto) {
-            self.captureSession?.sessionPreset = AVCaptureSessionPresetPhoto
+        if self.captureSession!.canSetSessionPreset(AVCaptureSessionPreset1280x720) {
+            self.captureSession?.sessionPreset = AVCaptureSessionPreset1280x720
         }
         
         if self.captureSession!.canAddInput(self.deviceInput) {
@@ -238,13 +238,8 @@ class CustomCaramViewController: UIViewController, UIImagePickerControllerDelega
             self.captureSession?.addOutput(self.imageOutPut)
         }
         
-        self.captureConnection = self.imageOutPut?.connection(withMediaType: AVMediaTypeVideo)
-        self.captureConnection?.videoOrientation = .portrait
-        self.captureConnection?.videoScaleAndCropFactor = 1.0
+
         
-        if self.captureSession!.canAdd(self.captureConnection) {
-            self.captureSession?.add(self.captureConnection)
-        }
         //设置layer
         self.preViewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession!)
         self.preViewLayer?.frame = UIScreen.main.bounds
@@ -355,13 +350,17 @@ class CustomCaramViewController: UIViewController, UIImagePickerControllerDelega
             return
         }
         
+        self.captureConnection = self.imageOutPut?.connection(withMediaType: AVMediaTypeVideo)
+        self.captureConnection?.videoOrientation = .portrait
+        self.captureConnection?.videoScaleAndCropFactor = 1.0
+        
         self.takePicBtn.isEnabled = false
-        UIView.animate(withDuration: 0.25) { 
-            self.bottomView.isHidden = true
-            self.takePicBtn.isHidden = true
-            self.cramaBtn.isHidden   = true
-            self.flashBtn.isHidden   = true
-        }
+//        UIView.animate(withDuration: 0.25) { 
+//            self.bottomView.isHidden = true
+//            self.takePicBtn.isHidden = true
+//            self.cramaBtn.isHidden   = true
+//            self.flashBtn.isHidden   = true
+//        }
         
         self.imageOutPut?.captureStillImageAsynchronously(from: self.captureConnection, completionHandler: { (imageDataSampleBuffer, error) in
             
@@ -375,10 +374,18 @@ class CustomCaramViewController: UIViewController, UIImagePickerControllerDelega
                 })
                 return
             }
-            self.captureSession?.stopRunning()
+          
             
             let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer)
             let image = UIImage(data: imageData!)
+              self.captureSession?.stopRunning()
+            
+            self.showImage = UIImageView(frame: (self.preViewLayer?.frame)!);
+            self.view.insertSubview(self.showImage!, belowSubview: self.closeBtn.superview!)
+            self.showImage?.layer.masksToBounds = true;
+            self.showImage?.image = image
+            
+            self.takePicBtn.isEnabled = true;
             
             //保存图片
 //            DispatchQueue.global().async {
