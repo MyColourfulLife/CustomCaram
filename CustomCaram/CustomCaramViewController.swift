@@ -555,7 +555,7 @@ class CustomCaramViewController: UIViewController, UIImagePickerControllerDelega
             return
         }
         //将触摸点转换到预览层
-        let devicePoint = self.preViewLayer?.captureDevicePointOfInterest(for: sender.location(in: sender.view))
+        let devicePoint = self.preViewLayer?.captureDevicePointOfInterest(for: sender.location(in: self.view))
         //锁定设备
         do {
             try self.captureDevice?.lockForConfiguration()
@@ -576,7 +576,7 @@ class CustomCaramViewController: UIViewController, UIImagePickerControllerDelega
         }
         
         //聚焦动画
-        self.focusView.center = sender.location(in: sender.view)
+        self.focusView.center = sender.location(in: self.view)
         self.focusView.isHidden = false
         
         UIView.animate(withDuration: 0.25, animations: { 
